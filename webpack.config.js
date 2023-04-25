@@ -27,7 +27,7 @@ module.exports = {
   },
   plugins: [
     new HtmlWebpackPlugin({
-      filename: "page/main.html", // output html-file
+      filename: "main.html", // output html-file
       template: path.resolve(__dirname, "src", "main.ejs"), // entry html-template
       inject: true,
       chunks: ["main"],

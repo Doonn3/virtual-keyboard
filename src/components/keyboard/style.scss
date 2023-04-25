@@ -1,0 +1,12 @@
+.virtual-keyboard {
+  display: grid;
+  padding: 20px;
+  background-color: rgb(65, 65, 65);
+  border: 2px solid black;
+  row-gap: 10px;
+
+  &__draw-row {
+    display: flex;
+    column-gap: 10px;
+  }
+}

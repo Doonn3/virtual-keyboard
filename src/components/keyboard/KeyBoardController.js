@@ -1,4 +1,3 @@
-import { app } from '../../main';
 import KeyBoardView from './KeyBoardView';
 
 class KeyBoardController {
@@ -16,13 +15,12 @@ class KeyBoardController {
   };
 
   init() {
-    this.#render();
-  }
-
-  #render() {
-    app.insertAdjacentHTML('beforeend', this.#view.render());
     this.#view.init();
     this.#view.changeLanguage(this.#langState.curr);
+  }
+
+  render() {
+    return this.#view.render();
   }
 
   switchLanguage() {
@@ -32,15 +30,16 @@ class KeyBoardController {
   }
 
   #isCapsLockActive = false;
+
   handlerDownKey(keyInfo) {
     if (!(keyInfo instanceof KeyboardEvent)) return;
-    const { key, code } = keyInfo;
+    const { code } = keyInfo;
 
     if (keyInfo.shiftKey && keyInfo.altKey) {
       this.switchLanguage();
     }
 
-    if (keyInfo.shiftKey) {
+    if (keyInfo.shiftKey && this.#isCapsLockActive === false) {
       this.#view.upperCase();
     }
 
@@ -55,22 +54,18 @@ class KeyBoardController {
     }
 
     this.#view.downKey(code);
-
-    console.log(code);
   }
 
   handlerUpKey(keyInfo) {
     if (!(keyInfo instanceof KeyboardEvent)) return;
-    const { key, code } = keyInfo;
+    const { code } = keyInfo;
     if (code === 'CapsLock') return;
 
-    if (keyInfo.shiftKey === false) {
+    if (keyInfo.shiftKey === false && this.#isCapsLockActive === false) {
       this.#view.lowerCase();
     }
 
     this.#view.upKey(code);
-
-    console.log(code);
   }
 }
 

@@ -1,14 +1,15 @@
 class VirtualKeyboardEvent {
-    static current = new VirtualKeyboardEvent();
-    #ownSub;
+  static current = new VirtualKeyboardEvent();
 
-    subscribe(sub) {
-        this.#ownSub = sub;
-    }
+  #ownSub = null;
 
-    emit(data) {
-        this.#ownSub(data);
-    }
+  subscribe(sub) {
+    this.#ownSub = sub;
+  }
+
+  emit(data) {
+    this.#ownSub(data);
+  }
 }
 
 export default VirtualKeyboardEvent;

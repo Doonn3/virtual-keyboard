@@ -16,7 +16,7 @@ class BaseCommand {
   }
 
   execute(method) {
-    if (!(method instanceof KeyboardEvent)) return;
+    if (!(method instanceof KeyboardEvent) && !(typeof method === 'object')) return;
     const { key, code } = method;
     if (this.#ignored.includes(code)) return;
 

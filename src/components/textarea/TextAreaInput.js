@@ -1,3 +1,4 @@
+import VirtualKeyboardEvent from '../../Events/VirtualKeyboardEvent';
 import BaseCommand from './Command/BaseCommand';
 
 class TextAreaInput {
@@ -9,10 +10,18 @@ class TextAreaInput {
     root.addEventListener('input', this.handlerTextArea);
     root.addEventListener('focus', this.#handlerFocus);
     root.addEventListener('focusout', this.#handlerFocusout);
+
+    VirtualKeyboardEvent.current.subscribe(this.#handlerVirtualKeyboard);
   }
 
   render() {
     return `<textarea class="text"></textarea>`;
+  }
+
+  #handlerVirtualKeyboard = (data) => {
+    if (this.#command instanceof BaseCommand) {
+      this.#command.execute(data);
+    }
   }
 
   handlerTextArea = (event) => {

@@ -1,3 +1,4 @@
+import VirtualKeyboardEvent from '../../Events/VirtualKeyboardEvent';
 import button from './components/button';
 import KeyBoardController from './KeyBoardController';
 import './style.scss';
@@ -19,6 +20,9 @@ class KeyBoardView {
   init() {
     this.#root = document.querySelector('.virtual-keyboard');
     this.#buttons = [...document.querySelectorAll('.button')];
+
+    this.#root.addEventListener('mousedown', this.#handlerClickDown);
+    this.#root.addEventListener('mouseup', this.#handlerClickUp);
   }
 
   render() {
@@ -99,9 +103,9 @@ class KeyBoardView {
             ${button({ id: 'Slash', key: '/', dataEng: '/?', dataRus: '.,' })}
             ${button({
               id: 'ArrowUp',
-              key: '&#129153;',
-              dataEng: '&#129153;',
-              dataRus: '&#129153;',
+              key: '⬆',
+              dataEng: '⬆',
+              dataRus: '⬆',
             })}
             ${button({
               id: 'ShiftRight',
@@ -115,31 +119,48 @@ class KeyBoardView {
             ${button({ id: 'ControlLeft', key: 'Ctrl', dataEng: 'Ctrl', dataRus: 'Ctrl' })}
             ${button({ id: 'MetaLeft', key: 'Win', dataEng: 'Win', dataRus: 'Win' })}
             ${button({ id: 'AltLeft', key: 'Alt', dataEng: 'Alt', dataRus: 'Alt' })}
-            ${button({ id: 'Space', key: '', dataEng: '', dataRus: '' })}
+            ${button({ id: 'Space', key: ' ', dataEng: ' ', dataRus: ' ' })}
             ${button({ id: 'AltRight', key: 'Alt', dataEng: 'Alt', dataRus: 'Alt' })}
             ${button({
               id: 'ArrowLeft',
-              key: '&#129152;',
-              dataEng: '&#129152;',
-              dataRus: '&#129152;',
+              key: '⬅',
+              dataEng: '⬅',
+              dataRus: '⬅',
             })}
             ${button({
               id: 'ArrowDown',
-              key: '&#129155;',
-              dataEng: '&#129155;',
-              dataRus: '&#129155;',
+              key: '⬇',
+              dataEng: '⬇',
+              dataRus: '⬇',
             })}
             ${button({
               id: 'ArrowRight',
-              key: '&#129154;',
-              dataEng: '&#129154;',
-              dataRus: '&#129154;',
+              key: '⮕',
+              dataEng: '⮕',
+              dataRus: '⮕',
             })}
             ${button({ id: 'ControlRight', key: 'Ctrl', dataEng: 'Ctrl', dataRus: 'Ctrl' })}
             </div>
         </section>
         `;
   }
+
+  #tempBtn = null;
+  #handlerClickDown = (event) => {
+    const target = event.target;
+    const btn = target.closest('.btn');
+    if (btn === null) return;
+    this.#tempBtn = btn;
+    const code = btn.getAttribute('id');
+    const key = btn.querySelector('.btn__key').textContent;
+    this.#keyIllumination(code);
+    VirtualKeyboardEvent.current.emit({ code, key });
+  };
+
+  #handlerClickUp = (event) => {
+    const code = this.#tempBtn.getAttribute('id');
+    this.#keyIllumination(code);
+  };
 
   downKey(key) {
     this.#keyIllumination(key);
@@ -162,7 +183,7 @@ class KeyBoardView {
       if (this.#match(btn.id)) return;
       const attrib = btn.getAttribute(`${this.#dataKeyState.curr}`);
       const data = attrib.split('');
-      const key = btn.querySelector('.button__key');
+      const key = btn.querySelector('.btn__key');
       key.textContent = data[1];
     });
   }
@@ -173,7 +194,7 @@ class KeyBoardView {
       if (this.#match(btn.id)) return;
       const attrib = btn.getAttribute(`${this.#dataKeyState.curr}`);
       const data = attrib.split('');
-      const key = btn.querySelector('.button__key');
+      const key = btn.querySelector('.btn__key');
       key.textContent = data[0];
     });
   }
@@ -187,7 +208,7 @@ class KeyBoardView {
       if (this.#match(btn.id)) return;
       const attrib = btn.getAttribute(`data-key-${lang}`);
       const data = attrib.split('');
-      const key = btn.querySelector('.button__key');
+      const key = btn.querySelector('.btn__key');
       key.textContent = data[0];
     });
   }

@@ -1,5 +1,6 @@
 class BaseCommand {
   #methods = ['Backspace', 'Delete', 'Enter', 'Tab'];
+
   #ignored = [
     'ShiftLeft',
     'ShiftRight',
@@ -11,6 +12,7 @@ class BaseCommand {
     'MetaLeft',
     'MetaRight',
   ];
+
   constructor(input) {
     this.input = input;
   }
@@ -40,17 +42,32 @@ class BaseCommand {
       case 'Delete':
         this.#deleteCommand();
         break;
+
+      case 'Enter':
+        this.#enterCommand();
+        break;
       default:
         break;
     }
   }
 
+  #cursorPosition = null;
+
   #charAdd(char) {
+    if (!(this.input instanceof HTMLTextAreaElement)) return;
+    this.#cursorPosition = this.input.selectionStart;
+    const textBeforeCursor = this.input.value.slice(0, this.#cursorPosition);
+    const textAfterCursor = this.input.value.slice(this.#cursorPosition);
+    this.input.value = textBeforeCursor + char + textAfterCursor;
+    this.input.setSelectionRange(this.#cursorPosition + 1, this.#cursorPosition + 1);
+  }
+
+  #enterCommand() {
     if (!(this.input instanceof HTMLTextAreaElement)) return;
     const cursorPosition = this.input.selectionStart;
     const textBeforeCursor = this.input.value.slice(0, cursorPosition);
     const textAfterCursor = this.input.value.slice(cursorPosition);
-    this.input.value = textBeforeCursor + char + textAfterCursor;
+    this.input.value = `${textBeforeCursor}\n${textAfterCursor}`;
     this.input.setSelectionRange(cursorPosition + 1, cursorPosition + 1);
   }
 
@@ -68,8 +85,8 @@ class BaseCommand {
     const cursorPosition = this.input.selectionStart;
     const textBeforeCursor = this.input.value.slice(0, cursorPosition);
     const textAfterCursor = this.input.value.slice(cursorPosition);
-    this.input.value = textBeforeCursor + '  ' + textAfterCursor;
-    this.input.setSelectionRange(cursorPosition + 1, cursorPosition + 1);
+    this.input.value = `${textBeforeCursor}    ${textAfterCursor}`;
+    this.input.setSelectionRange(cursorPosition + 4, cursorPosition + 4);
   }
 
   #deleteCommand() {
@@ -79,6 +96,12 @@ class BaseCommand {
     const textAfterCursor = this.input.value.slice(cursorPosition);
     this.input.value = textBeforeCursor + textAfterCursor.slice(1);
     this.input.setSelectionRange(cursorPosition, cursorPosition);
+  }
+
+  restoreCursorPosition() {
+    if (!(this.input instanceof HTMLTextAreaElement)) return;
+    this.input.selectionStart = this.#cursorPosition;
+    this.input.selectionEnd = this.#cursorPosition;
   }
 }
 

@@ -6,8 +6,8 @@ function button(buttonType) {
   const classNameMod = id === 'Tab' ? 'tab' : '';
 
   return `
-    <div id="${id}" class="button ${classNameMod}" data-key-eng="${dataEng}" data-key-rus="${dataRus}">
-        <span class="button__key">${key}</span>
+    <div id="${id}" class="btn ${classNameMod}" data-key-eng="${dataEng}" data-key-rus="${dataRus}">
+        <p class="btn__key">${key}</p>
     </div>
     `;
 }

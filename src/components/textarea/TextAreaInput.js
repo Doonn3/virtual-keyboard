@@ -33,7 +33,6 @@ class TextAreaInput {
 
   handlerTextArea = (event) => {
     if (this.#isFocus) return;
-    alert('s');
     if (event instanceof InputEvent) return;
 
     if (this.#command instanceof BaseCommand) {

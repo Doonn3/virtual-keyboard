@@ -23,10 +23,12 @@ app.insertAdjacentHTML(
 Для переключения языка комбинация: Shift + alt или раскладка вашей операционной системы`),
 );
 
+const match = ['Tab', 'Shift', 'Alt', 'Meta'];
+
 let tempKey = null;
 const onKeyDown = (event) => {
   if (!(event instanceof KeyboardEvent)) return;
-  if (event.key === 'Tab') event.preventDefault();
+  if (match.includes(event.key)) event.preventDefault();
   textArea.handlerTextArea(event);
   if (tempKey === event.key) return;
   keyboard.handlerDownKey(event);

@@ -1,11 +1,12 @@
 import VirtualKeyboardEvent from '../../Events/VirtualKeyboardEvent';
 import button from './components/button';
-import KeyBoardController from './KeyBoardController';
 import './style.scss';
 
 class KeyBoardView {
   #root = null;
+
   #buttons = [];
+
   #dataKeyState = {
     curr: 'data-key-eng',
     switch() {
@@ -19,7 +20,7 @@ class KeyBoardView {
 
   init() {
     this.#root = document.querySelector('.virtual-keyboard');
-    this.#buttons = [...document.querySelectorAll('.button')];
+    this.#buttons = [...document.querySelectorAll('.btn')];
 
     this.#root.addEventListener('mousedown', this.#handlerClickDown);
     this.#root.addEventListener('mouseup', this.#handlerClickUp);
@@ -146,20 +147,47 @@ class KeyBoardView {
   }
 
   #tempBtn = null;
+
+  #isCapsLock = false;
+
   #handlerClickDown = (event) => {
-    const target = event.target;
+    const { target } = event;
     const btn = target.closest('.btn');
     if (btn === null) return;
     this.#tempBtn = btn;
     const code = btn.getAttribute('id');
+
+    if (code === 'CapsLock') {
+      this.#isCapsLock = !this.#isCapsLock;
+      if (this.#isCapsLock) {
+        this.upperCase();
+      } else {
+        this.lowerCase();
+      }
+    }
+
+    if (code === 'ShiftLeft' || (code === 'ShiftRight' && this.#isCapsLock === false)) {
+      this.upperCase();
+    }
+
     const key = btn.querySelector('.btn__key').textContent;
     this.#keyIllumination(code);
     VirtualKeyboardEvent.current.emit({ code, key });
   };
 
-  #handlerClickUp = (event) => {
+  #handlerClickUp = () => {
+    if (this.#tempBtn === null || this.#tempBtn === undefined) return;
     const code = this.#tempBtn.getAttribute('id');
-    this.#keyIllumination(code);
+    if (code === 'ShiftLeft' || code === 'ShiftRight') {
+      if (this.#isCapsLock === false) {
+        this.lowerCase();
+      }
+    }
+    if (code !== 'CapsLock') {
+      this.#keyIllumination(code);
+    }
+
+    this.#tempBtn = null;
   };
 
   downKey(key) {
@@ -173,6 +201,7 @@ class KeyBoardView {
 
   #keyIllumination(key) {
     const findBtn = this.#buttons.find((btn) => btn.id === key);
+
     if (findBtn) {
       findBtn.classList.toggle('pressed--button');
     }
@@ -189,7 +218,6 @@ class KeyBoardView {
   }
 
   lowerCase() {
-    console.log('asd');
     this.#buttons.forEach((btn) => {
       if (this.#match(btn.id)) return;
       const attrib = btn.getAttribute(`${this.#dataKeyState.curr}`);
@@ -200,13 +228,14 @@ class KeyBoardView {
   }
 
   changeLanguage(lang) {
-    if (lang === undefined) lang = 'eng';
-    if (lang !== 'eng' && lang !== 'rus') lang = 'eng';
+    let la = lang;
+    if (lang === undefined) la = 'eng';
+    if (lang !== 'eng' && lang !== 'rus') la = 'eng';
     this.#dataKeyState.switch();
 
     this.#buttons.forEach((btn) => {
       if (this.#match(btn.id)) return;
-      const attrib = btn.getAttribute(`data-key-${lang}`);
+      const attrib = btn.getAttribute(`data-key-${la}`);
       const data = attrib.split('');
       const key = btn.querySelector('.btn__key');
       key.textContent = data[0];
@@ -219,6 +248,7 @@ class KeyBoardView {
       'Tab',
       'Delete',
       'CapsLock',
+      'Enter',
       'ShiftLeft',
       'ShiftRight',
       'ControlLeft',
@@ -226,6 +256,10 @@ class KeyBoardView {
       'MetaLeft',
       'AltLeft',
       'AltRight',
+      'ArrowLeft',
+      'ArrowUp',
+      'ArrowDown',
+      'ArrowRight',
     ];
     if (arr.includes(str)) return true;
     return false;

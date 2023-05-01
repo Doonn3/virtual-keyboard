@@ -12,6 +12,8 @@
   "author": "doonn3",
   "license": "ISC",
   "devDependencies": {
+    "@babel/eslint-parser": "^7.21.3",
+    "@babel/preset-env": "^7.21.5",
     "css-loader": "^6.7.3",
     "ejs": "^3.1.9",
     "eslint": "^8.39.0",

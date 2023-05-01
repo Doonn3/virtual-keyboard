@@ -6,13 +6,22 @@ import './main.scss';
 
 document.body.insertAdjacentHTML('beforeend', '<div id="app"></div>');
 
-export const app = document.querySelector('#app');
+const app = document.querySelector('#app');
+export default app;
+
 const textArea = new TextAreaInput();
 app.insertAdjacentHTML('beforeend', textArea.render());
 textArea.init();
 
 const keyboard = new KeyBoardController();
-app.insertAdjacentHTML('beforeend', Title('Смена Языка Шифт Альт'));
+app.insertAdjacentHTML('beforeend', keyboard.render());
+keyboard.init();
+
+app.insertAdjacentHTML(
+  'beforeend',
+  Title(`Клавиатура создана в операционной системе Windows
+Для переключения языка комбинация: Shift + alt или раскладка вашей операционной системы`),
+);
 
 let tempKey = null;
 const onKeyDown = (event) => {
@@ -31,13 +40,7 @@ const onKeyUp = (event) => {
   tempKey = null;
 };
 
-const onInput = (event) => {
-  console.log('AAAAAAAAAAAAA');
-};
-
 window.addEventListener('keydown', onKeyDown);
 window.addEventListener('keyup', onKeyUp);
-// window.addEventListener('input', onInput);
-
 
 keyboard.init();

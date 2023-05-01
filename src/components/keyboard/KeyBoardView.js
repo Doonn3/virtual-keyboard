@@ -9,12 +9,8 @@ class KeyBoardView {
 
   #dataKeyState = {
     curr: 'data-key-eng',
-    switch() {
-      if (this.curr === 'data-key-eng') {
-        this.curr = 'data-key-rus';
-      } else {
-        this.curr = 'data-key-eng';
-      }
+    switch(lang) {
+      this.curr = `data-key-${lang}`;
     },
   };
 
@@ -166,8 +162,10 @@ class KeyBoardView {
       }
     }
 
-    if (code === 'ShiftLeft' || (code === 'ShiftRight' && this.#isCapsLock === false)) {
-      this.upperCase();
+    if (code === 'ShiftLeft' || code === 'ShiftRight') {
+      if (this.#isCapsLock === false) {
+        this.upperCase();
+      }
     }
 
     const key = btn.querySelector('.btn__key').textContent;
@@ -231,7 +229,7 @@ class KeyBoardView {
     let la = lang;
     if (lang === undefined) la = 'eng';
     if (lang !== 'eng' && lang !== 'rus') la = 'eng';
-    this.#dataKeyState.switch();
+    this.#dataKeyState.switch(la);
 
     this.#buttons.forEach((btn) => {
       if (this.#match(btn.id)) return;

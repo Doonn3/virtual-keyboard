@@ -1,0 +1,22 @@
+{
+    "parser": "@babel/eslint-parser",
+    "parserOptions": {
+        "requireConfigFile": false,
+        "babelOptions": {
+          "presets": ["@babel/preset-env"]
+        }
+    },
+    "extends": "airbnb-base",
+    "env": {
+        "browser": true
+    },
+    "rules": {
+        "class-methods-use-this": "off",
+        "indent": "off",
+        "object-curly-newline": "off",
+        "prefer-destructuring": "off",
+        "no-nested-ternary": "off",
+        "operator-linebreak": "off",
+        "linebreak-style": "off"
+    }
+}

@@ -38,10 +38,10 @@ const onKeyDown = (event) => {
 };
 
 const onKeyUp = (event) => {
-  event.preventDefault();
+  // event.preventDefault();
   if (!(event instanceof KeyboardEvent)) return;
   keyboard.handlerUpKey(event);
 };
 
 window.addEventListener('keydown', onKeyDown);
-window.addEventListener('keyup', onKeyUp);
+window.addEventListener('keyup', onKeyUp, { passive: false });

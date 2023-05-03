@@ -51,15 +51,14 @@ class BaseCommand {
     }
   }
 
-  #cursorPosition = null;
-
   #charAdd(char) {
     if (!(this.input instanceof HTMLTextAreaElement)) return;
-    this.#cursorPosition = this.input.selectionStart;
-    const textBeforeCursor = this.input.value.slice(0, this.#cursorPosition);
-    const textAfterCursor = this.input.value.slice(this.#cursorPosition);
-    this.input.value = textBeforeCursor + char + textAfterCursor;
-    this.input.setSelectionRange(this.#cursorPosition + 1, this.#cursorPosition + 1);
+    const selectionStart = this.input.selectionStart;
+    const selectionEnd = this.input.selectionEnd;
+    const textBeforeSelection = this.input.value.slice(0, selectionStart);
+    const textAfterSelection = this.input.value.slice(selectionEnd);
+    this.input.value = textBeforeSelection + char + textAfterSelection;
+    this.input.setSelectionRange(selectionStart + 1, selectionStart + 1);
   }
 
   #enterCommand() {
@@ -102,11 +101,11 @@ class BaseCommand {
     const textBeforeCursor = this.input.value.slice(0, cursorPositionStart);
     const textAfterCursor = this.input.value.slice(cursorPositionEnd);
     if (cursorPositionStart === cursorPositionEnd) {
-        this.input.value = textBeforeCursor + textAfterCursor.slice(1);
-        this.input.setSelectionRange(cursorPositionStart, cursorPositionStart);
+      this.input.value = textBeforeCursor + textAfterCursor.slice(1);
+      this.input.setSelectionRange(cursorPositionStart, cursorPositionStart);
     } else {
-        this.input.value = textBeforeCursor + textAfterCursor;
-        this.input.setSelectionRange(cursorPositionStart, cursorPositionStart);
+      this.input.value = textBeforeCursor + textAfterCursor;
+      this.input.setSelectionRange(cursorPositionStart, cursorPositionStart);
     }
   }
 }

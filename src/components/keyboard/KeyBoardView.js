@@ -164,11 +164,13 @@ class KeyBoardView {
     const key = btn.querySelector('.btn__key').textContent;
 
     if (this.#model instanceof SwitchUpperLowerMode) {
-      const isUpperCase = this.#model.down(key).IsUpperCase;
-      if (isUpperCase) {
-        this.upperCase();
-      } else {
-        this.lowerCase();
+      if (code === 'CapsLock' || key === 'Shift') {
+        const isUpperCase = this.#model.down(key).IsUpperCase;
+        if (isUpperCase) {
+          this.upperCase();
+        } else {
+          this.lowerCase();
+        }
       }
     }
 
@@ -176,13 +178,23 @@ class KeyBoardView {
     VirtualKeyboardEvent.current.emit({ code, key });
   };
 
-  #handlerClickUp = () => {
+  #handlerClickUp = (event) => {
     if (this.#tempBtn === null || this.#tempBtn === undefined) return;
-    const isUpperCase = this.#model.up().IsUpperCase;
-    if (!isUpperCase) {
-      this.lowerCase();
+    const { target } = event;
+    const btn = target.closest('.btn');
+    if (btn === null) return;
+    this.#tempBtn = btn;
+    const code = btn.getAttribute('id');
+    const key = btn.querySelector('.btn__key').textContent;
+
+    if (code === 'CapsLock' || key === 'Shift') {
+      const isUpperCase = this.#model.up().IsUpperCase;
+      if (!isUpperCase) {
+        this.lowerCase();
+      }
     }
-    this.keyIlluminationOff();
+
+    this.keyIlluminationOff(code);
 
     this.#tempBtn = null;
   };
@@ -207,11 +219,14 @@ class KeyBoardView {
     }
   }
 
-  keyIlluminationOff(ignor = 'CapsLock') {
-    this.#buttons.forEach((btn) => {
-      if (btn.id === ignor) return;
-      btn.classList.remove('pressed--button');
-    });
+  keyIlluminationOff(code) {
+    const ignor = 'CapsLock';
+    if (code === ignor) return;
+
+    const findBtn = this.#buttons.find((btn) => btn.id === code);
+    if (findBtn) {
+      findBtn.classList.remove('pressed--button');
+    }
   }
 
   upperCase() {

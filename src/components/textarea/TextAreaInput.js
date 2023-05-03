@@ -50,10 +50,10 @@ class TextAreaInput {
     event.preventDefault();
   };
 
-  handlerTextAreaUp = (event) => {
+  handlerTextAreaUp = () => {
     this.#isArrodData = false;
 
-    event.preventDefault();
+    // event.preventDefault();
   };
 
   // #handlerFocus = () => {

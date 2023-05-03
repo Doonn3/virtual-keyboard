@@ -73,11 +73,17 @@ class BaseCommand {
 
   #backSpaceCommand() {
     if (!(this.input instanceof HTMLTextAreaElement)) return;
-    const cursorPosition = this.input.selectionStart;
-    const textBeforeCursor = this.input.value.slice(0, cursorPosition);
-    const textAfterCursor = this.input.value.slice(cursorPosition);
-    this.input.value = textBeforeCursor.slice(0, -1) + textAfterCursor;
-    this.input.setSelectionRange(cursorPosition - 1, cursorPosition);
+    const cursorPositionStart = this.input.selectionStart;
+    const cursorPositionEnd = this.input.selectionEnd;
+    const textBeforeCursor = this.input.value.slice(0, cursorPositionStart);
+    const textAfterCursor = this.input.value.slice(cursorPositionEnd);
+    if (cursorPositionStart === cursorPositionEnd) {
+      this.input.value = textBeforeCursor.slice(0, -1) + textAfterCursor;
+      this.input.setSelectionRange(cursorPositionStart - 1, cursorPositionStart - 1);
+    } else {
+      this.input.value = textBeforeCursor + textAfterCursor;
+      this.input.setSelectionRange(cursorPositionStart, cursorPositionStart);
+    }
   }
 
   #tabCommand() {
@@ -91,17 +97,17 @@ class BaseCommand {
 
   #deleteCommand() {
     if (!(this.input instanceof HTMLTextAreaElement)) return;
-    const cursorPosition = this.input.selectionStart;
-    const textBeforeCursor = this.input.value.slice(0, cursorPosition);
-    const textAfterCursor = this.input.value.slice(cursorPosition);
-    this.input.value = textBeforeCursor + textAfterCursor.slice(1);
-    this.input.setSelectionRange(cursorPosition, cursorPosition);
-  }
-
-  restoreCursorPosition() {
-    if (!(this.input instanceof HTMLTextAreaElement)) return;
-    this.input.selectionStart = this.#cursorPosition;
-    this.input.selectionEnd = this.#cursorPosition;
+    const cursorPositionStart = this.input.selectionStart;
+    const cursorPositionEnd = this.input.selectionEnd;
+    const textBeforeCursor = this.input.value.slice(0, cursorPositionStart);
+    const textAfterCursor = this.input.value.slice(cursorPositionEnd);
+    if (cursorPositionStart === cursorPositionEnd) {
+        this.input.value = textBeforeCursor + textAfterCursor.slice(1);
+        this.input.setSelectionRange(cursorPositionStart, cursorPositionStart);
+    } else {
+        this.input.value = textBeforeCursor + textAfterCursor;
+        this.input.setSelectionRange(cursorPositionStart, cursorPositionStart);
+    }
   }
 }
 

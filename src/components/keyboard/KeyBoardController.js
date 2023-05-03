@@ -1,71 +1,62 @@
 import KeyBoardView from './KeyBoardView';
+import SwitchLanguageModel from './models/SwitchLanguageModel';
+import SwitchUpperLowerMode from './models/SwitchUpperLowerModel';
 
 class KeyBoardController {
-  #view = new KeyBoardView();
+  #langSwitch = new SwitchLanguageModel();
 
-  #langState = {
-    curr: localStorage.getItem('Language'),
-    switch() {
-      if (this.curr === 'eng') {
-        this.curr = 'rus';
-      } else {
-        this.curr = 'eng';
-      }
-    },
-  };
+  #upperCaseSwitch = new SwitchUpperLowerMode();
+
+  #view = new KeyBoardView(this.#upperCaseSwitch);
 
   init() {
     this.#view.init();
-    this.#view.changeLanguage(this.#langState.curr);
+    this.#view.changeLanguage(this.#langSwitch.Language);
   }
 
   render() {
     return this.#view.render();
   }
 
-  switchLanguage() {
-    this.#langState.switch();
-    this.#view.changeLanguage(this.#langState.curr);
-    localStorage.setItem('Language', this.#langState.curr);
-  }
-
-  #isCapsLockActive = false;
+  #tempCode = null;
 
   handlerDownKey(keyInfo) {
     if (!(keyInfo instanceof KeyboardEvent)) return;
-    const { code } = keyInfo;
 
-    if (keyInfo.shiftKey && keyInfo.altKey) {
-      this.switchLanguage();
+    if (this.#tempCode !== keyInfo.code) {
+      this.#view.keyIllumination(keyInfo.code);
     }
 
-    if (keyInfo.shiftKey && this.#isCapsLockActive === false) {
+    this.#tempCode = keyInfo.code;
+
+    const isUpperCase = this.#upperCaseSwitch.down(keyInfo.key).IsUpperCase;
+
+    if (isUpperCase) {
       this.#view.upperCase();
-    }
-
-    if (code === 'CapsLock') {
-      this.#isCapsLockActive = !this.#isCapsLockActive;
-    }
-
-    if (this.#isCapsLockActive) {
-      this.#view.upperCase();
-    } else if (!this.#isCapsLockActive && !keyInfo.shiftKey) {
+      this.#view.isUpprecase = isUpperCase;
+    } else {
       this.#view.lowerCase();
     }
 
-    this.#view.downKey(code);
+    const langSwitch = this.#langSwitch.execute(keyInfo);
+    if (langSwitch) {
+      this.#view.changeLanguage(this.#langSwitch.Language);
+    }
+
+    this.#view.downKey(keyInfo);
   }
 
   handlerUpKey(keyInfo) {
     if (!(keyInfo instanceof KeyboardEvent)) return;
-    const { code } = keyInfo;
-    if (code === 'CapsLock') return;
-
-    if (keyInfo.shiftKey === false && this.#isCapsLockActive === false) {
+    if (this.#tempCode === null) return;
+    const isUpperCase = this.#upperCaseSwitch.up().IsUpperCase;
+    if (!isUpperCase) {
       this.#view.lowerCase();
+      this.#view.isUpprecase = isUpperCase;
     }
 
-    this.#view.upKey(code);
+    this.#view.keyIlluminationOff();
+    this.#tempCode = null;
   }
 }
 

@@ -1,3 +1,4 @@
+import { ignorKeyCode } from './common/utils';
 import KeyBoardController from './components/keyboard/KeyBoardController';
 import TextAreaInput from './components/textarea/TextAreaInput';
 import Title from './components/title/Title';
@@ -20,29 +21,27 @@ keyboard.init();
 app.insertAdjacentHTML(
   'beforeend',
   Title(`Клавиатура создана в операционной системе Windows
-Для переключения языка комбинация: Shift + alt или раскладка вашей операционной системы`),
+Для переключения языка комбинация: Ctrl + Shift`),
 );
 
 const match = ['Tab', 'Shift', 'Alt', 'Meta'];
 
-let tempKey = null;
 const onKeyDown = (event) => {
+  if (ignorKeyCode.includes(event.code)) {
+    event.preventDefault();
+  }
+
   if (!(event instanceof KeyboardEvent)) return;
   if (match.includes(event.key)) event.preventDefault();
-  textArea.handlerTextArea(event);
-  if (tempKey === event.key) return;
-  keyboard.handlerDownKey(event);
 
-  tempKey = event.key;
+  keyboard.handlerDownKey(event);
 };
 
 const onKeyUp = (event) => {
+  event.preventDefault();
   if (!(event instanceof KeyboardEvent)) return;
   keyboard.handlerUpKey(event);
-  tempKey = null;
 };
 
 window.addEventListener('keydown', onKeyDown);
 window.addEventListener('keyup', onKeyUp);
-
-keyboard.init();

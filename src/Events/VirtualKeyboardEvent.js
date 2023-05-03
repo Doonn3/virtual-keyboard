@@ -8,6 +8,7 @@ class VirtualKeyboardEvent {
   }
 
   emit(data) {
+    if (typeof this.#ownSub !== 'function') return;
     this.#ownSub(data);
   }
 }
